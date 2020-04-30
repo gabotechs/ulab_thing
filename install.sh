@@ -53,9 +53,14 @@ echo "ok, password will be *******, <- hello hackers"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
 apt update
-apt install python3.7
-apt install python3-pip
-python3 -m venv venv
+apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
+tar zxf Python-3.7.0.tgz
+cd Python-3.7.0
+./configure
+make -j 4
+make altinstall
+python3.7 -m venv venv
 source venv/bin/activate
 pip install -r requeriments.txt
 
