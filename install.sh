@@ -52,6 +52,7 @@ done
 echo "ok, password will be *******, <- hello hackers"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
+apt update
 apt install python3.7
 apt install python3-pip
 python3 -m venv venv
