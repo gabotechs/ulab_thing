@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+if [[ "$EUID" -ne 0 ]]
+  then echo "Please run as root"
+  exit
+fi
+
 echo "what will be the ulab server url?"
 while true; do
     read ulab_url
@@ -54,14 +59,51 @@ echo "now we have all the info we need to install ulab_thing in this pandora, st
 echo "==== installing dependencies ===="
 apt update
 apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
-wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
-tar zxf Python-3.7.0.tgz
-cd Python-3.7.0
-./configure
-make -j 4
-make altinstall
+if [[ -d Python-3.7.0 ]]; then
+    echo "python3.7 already installed"
+else
+    wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
+    tar zxf Python-3.7.0.tgz
+    cd Python-3.7.0
+    ./configure
+    make -j 4
+    make altinstall
+fi
 python3.7 -m venv venv
 source venv/bin/activate
 pip install -r requeriments.txt
 
+echo "
+#!/usr/bin/env bash
+cd $PWD
+source venv/bin/activate
+python main.py \$@
+" > ulab_thing.sh
+
+chmod +x ulab_thing.sh
+mv ulab_thing.sh /bin/ulab_thing
+
+touch /etc/systemd/system/ulab_thing.service
+chmod 775 /etc/systemd/system/ulab_thing.service
+chmod a+w /etc/systemd/system/ulab_thing.service
+
+echo "
+[Unit]
+Description=ulab_thing
+
+[Service]
+User=root
+ExecStart=/bin/bash /bin/ulab_thing --user=$user --password=$pass --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
+Restart=on-failure
+WorkingDirectory=$PWD
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+" > /etc/systemd/system/ulab_thing.service
+
+systemctl enable ulab_thing.service
+systemctl daemon-reload
+service ulab_thing start
 
