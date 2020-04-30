@@ -68,6 +68,7 @@ else
     ./configure
     make -j 4
     make altinstall
+    cd ..
 fi
 python3.7 -m venv venv
 source venv/bin/activate
