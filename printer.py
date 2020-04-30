@@ -41,7 +41,6 @@ class Printer:
 
     async def init(self):
         self.sentState = {}
-        await self.octoapi.connect()
         if os.path.isfile("store.json"):
             self.actualState = {"settings": json.load(open("store.json"))}
         else:
