@@ -15,8 +15,11 @@ class OctoApi:
 
     async def connect(self, safe=True) -> None:
         r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect", "baudrate": 250000}))
-        if not r.status == 200 and not safe:
-            raise HttpException(r.status)
+        if not r.status == 200:
+            if safe:
+                await asyncio.sleep(10)
+            else:
+                raise HttpException(r.status)
 
     async def get_status(self) -> Dict:
         r = await self.session.get(self.url+'/printer')
