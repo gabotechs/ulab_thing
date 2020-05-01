@@ -13,9 +13,9 @@ class OctoApi:
         self.key = yaml.load(open(self.config_path + '/config.yaml'), Loader=yaml.loader.Loader)['api']['key']
         self.session = aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
 
-    async def connect(self) -> None:
+    async def connect(self, safe=True) -> None:
         r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect", "baudrate": 250000}))
-        if not r.status == 200:
+        if not r.status == 200 and not safe:
             raise HttpException(r.status)
 
     async def get_status(self) -> Dict:
