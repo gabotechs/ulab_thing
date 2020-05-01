@@ -1,10 +1,12 @@
-import yaml
-import json
-import aiohttp
 import asyncio
+import json
 from typing import Dict
-from exceptions import HttpException
+
+import aiohttp
+import yaml
+
 from args import get_args
+from exceptions import HttpException
 
 
 class OctoApi:

@@ -1,6 +1,6 @@
+from Logger import get as log
 from args import get_args
 from printer import Printer
-from Logger import get as log
 
 if __name__ == '__main__':
     import asyncio

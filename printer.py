@@ -1,14 +1,16 @@
-from typing import Dict, Any
-import json
-from listener import listener
 import copy
+import json
 import os
+from typing import Dict, Any
+
 from aiohttp.client_exceptions import ClientConnectorError
-from exceptions import HttpException
-from octoapi import OctoApi
-from ulabapi import UlabApi
+
 from Logger import get as log
 from diffengine import DiffEngine
+from exceptions import HttpException
+from listener import listener
+from octoapi import OctoApi
+from ulabapi import UlabApi
 
 
 class Printer:
