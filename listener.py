@@ -43,25 +43,19 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 log().warning("pandora is not in an operational state")
                 await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "pandora is not in an operational state"}, namespace='/pandora')
                 return
-            try:
-                file = await printer.ulabapi.get_file(data['file'])
-            except GetFileException:
-                log().warning("file "+data['file']+" not in server")
-                await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "file "+data['file']+" not in server"}, namespace='/pandora')
-                return
 
-            gcode = get_args().octoprint_path+'/uploads/'+file['name']
+            gcode = get_args().octoprint_path+'/uploads/'+data['file']
             if not os.path.isfile(gcode):
                 log().info("file "+gcode+" not found, downloading it...")
 
-                url = get_args().ulab_url + '/gcodes/' + file['name']
+                url = get_args().ulab_url + '/gcodes/' + data['file']
                 r = await printer.ulabapi.session.get(url)
 
                 if not r.status == 200:
-                    log().warning("error downloading file "+file['name']+" from url:"+str(r.status))
+                    log().warning("error downloading file "+data['file']+" from url:"+str(r.status))
                     await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "file was not on pandora, and there was an error downloading it"}, namespace='/pandora')
                     return
-                printer.actualState["download"]["file"] = file['name']
+                printer.actualState["download"]["file"] = data['file']
                 printer.actualState["download"]["completion"] = 0.0
                 await printer.ulabapi.socket.emit(data['id'], {"status": 0, "message": "file was not on pandora, downloading it and printing it..."}, namespace='/pandora')
                 answer_flag = False
@@ -75,13 +69,13 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                         break
                     await f.write(chunk)
                     readed += 1024
-                log().info("file "+file['name']+' downloaded successfully, printing it...')
+                log().info("file "+data['file']+' downloaded successfully, printing it...')
                 printer.actualState["download"]["file"] = None
                 printer.actualState["download"]["completion"] = -1
                 await printer.syncWithUlab()
 
-            log().info("printing file "+file['name']+'...')
-            await printer.octoapi.print(file['name'])
+            log().info("printing file "+data['file']+'...')
+            await printer.octoapi.print(data['file'])
             await printer.ulabapi.socket.emit("print", {"id": data['file']}, namespace='/pandora')
 
         ###### CANCEL ######
