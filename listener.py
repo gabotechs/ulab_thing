@@ -44,7 +44,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "pandora is not in an operational state"}, namespace='/pandora')
                 return
 
-            gcode = get_args().octoprint_path+'/uploads/'+data['file'] if data['file'].endswith('.gcode') else data['file']+'.gcode'
+            gcode = get_args().octoprint_path+'/uploads/'+(data['file'] if data['file'].endswith('.gcode') else data['file']+'.gcode')
             if not os.path.isfile(gcode):
                 log().info("file "+gcode+" not found, downloading it...")
 
@@ -69,7 +69,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                         break
                     await f.write(chunk)
                     readed += 1024
-                log().info("file "+data['file']+' downloaded successfully, printing it...')
+                log().info("file "+gcode+' downloaded successfully, printing it...')
                 printer.actualState["download"]["file"] = None
                 printer.actualState["download"]["completion"] = -1
                 await printer.syncWithUlab()
