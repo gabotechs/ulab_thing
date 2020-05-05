@@ -52,7 +52,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 r = await printer.ulabapi.session.get(url)
 
                 if not r.status == 200:
-                    log().warning("error downloading file "+data['file']+" from url:"+str(r.status))
+                    log().warning("error downloading file "+data['file']+" from url: "+str(r.status))
                     await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "file was not on pandora, and there was an error downloading it"}, namespace='/pandora')
                     return
                 printer.actualState["download"]["file"] = data['file']
