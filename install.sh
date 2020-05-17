@@ -35,36 +35,26 @@ while true; do
     fi
 done
 echo "ok, octoprint path will be ${octo_path}"
-echo "from who is this pandora?"
+echo "what is the token asociated to this pandora?"
 while true; do
-    read user
-    if [[ ${user} == "" ]]; then
-        echo "the user must have a name"
+    read token
+    if [[ ${token} == "" ]]; then
+        echo "the token must not be empty"
     else
         break
     fi
 done
-echo "ok, user will be ${user}"
-echo "and the password is..."
-while true; do
-    read pass
-    if [[ ${pass} == "" ]]; then
-        echo "the password must not be empty"
-    else
-        break
-    fi
-done
-echo "ok, password will be *******, <- hello hackers"
+echo "ok, token will be ${token}"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
 apt update
 apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
-if [[ -d Python-3.7.0 ]]; then
+if [[ -d Python-3.7.4 ]]; then
     echo "python3.7 already installed"
 else
-    wget https://www.python.org/ftp/python/3.7.0/Python-3.7.0.tgz
-    tar zxf Python-3.7.0.tgz
-    cd Python-3.7.0
+    wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz
+    tar zxf Python-3.7.4.tgz
+    cd Python-3.7.4
     ./configure
     make -j 4
     make altinstall
@@ -94,7 +84,7 @@ Description=ulab_thing
 
 [Service]
 User=root
-ExecStart=/bin/bash /bin/ulab_thing --user=$user --password=$pass --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
+ExecStart=/bin/bash /bin/ulab_thing --ulab-token=$token --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
 Restart=on-failure
 WorkingDirectory=$PWD
 StandardOutput=syslog
