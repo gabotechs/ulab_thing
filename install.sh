@@ -47,12 +47,14 @@ done
 echo "ok, token will be ${token}"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
-apt update
-apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+
 if [[ -d Python-3.7.4 ]]; then
     echo "python3.7 already installed"
 else
-    wget https://www.python.org/ftp/python/3.7.4/Python-3.7.4.tgz
+    apt update
+    apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
+    wget https://www.pythls
+    on.org/ftp/python/3.7.4/Python-3.7.4.tgz
     tar zxf Python-3.7.4.tgz
     cd Python-3.7.4
     ./configure
@@ -60,7 +62,8 @@ else
     make altinstall
     cd ..
 fi
-python3.7 -m venv venv
+apt install python3-venv -y
+python3 -m venv venv
 source venv/bin/activate
 pip install -r requeriments.txt
 

@@ -17,7 +17,7 @@ class OctoApi:
         self.session = aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
 
     async def connect(self, safe=True) -> None:
-        r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect", "baudrate": 250000}))
+        r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect"}))
         if not r.status == 200:
             if safe:
                 await asyncio.sleep(10)
