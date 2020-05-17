@@ -8,16 +8,15 @@ from exceptions import GetFileException
 
 
 class UlabApi:
-    def __init__(self, url, user, password):
+    def __init__(self, url, token):
         self.url = url
-        self.user = user
-        self.password = password
+        self.token = token
         self.socket = socketio.AsyncClient()
 
-        self.session = aiohttp.ClientSession(auth=aiohttp.BasicAuth(user, password))
+        self.session = aiohttp.ClientSession(headers={"Authorization": "Basic "+b64encode(self.token.encode()).decode()})
 
     async def connect(self) -> None:
-        await self.socket.connect(self.url, namespaces=['/pandora'], headers={"Authorization": "Basic "+b64encode((self.user+":"+self.password).encode()).decode()})
+        await self.socket.connect(self.url, namespaces=['/pandora'], headers={"Authorization": "Basic "+b64encode(self.token.encode()).decode()})
 
     async def update_status(self, spec) -> None:
         await self.socket.emit("update", spec, namespace='/pandora')

@@ -17,9 +17,9 @@ class Printer:
     sentState: Dict[str, Any] = {}
     actualState: Dict[str, Any] = {}
 
-    def __init__(self, octoprint_url, octoprint_config, ulab_url, ulab_user, ulab_password):
+    def __init__(self, octoprint_url, octoprint_config, ulab_url, ulab_token):
         self.octoapi = OctoApi(octoprint_url, octoprint_config)
-        self.ulabapi = UlabApi(ulab_url, ulab_user, ulab_password)
+        self.ulabapi = UlabApi(ulab_url, ulab_token)
         self.diffengine = DiffEngine()
 
         @self.ulabapi.socket.event(namespace='/pandora')

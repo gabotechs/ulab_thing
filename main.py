@@ -8,7 +8,7 @@ if __name__ == '__main__':
     args = get_args()
 
     async def main():
-        printer = Printer(args.octoprint_url, args.octoprint_path, args.ulab_url, args.user, args.password)
+        printer = Printer(args.octoprint_url, args.octoprint_path, args.ulab_url, args.ulab_token)
         while True:
             try:
                 await printer.ulabapi.connect()
