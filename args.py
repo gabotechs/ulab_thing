@@ -2,7 +2,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--octoprint-url', default='http://localhost')
+parser.add_argument('--octoprint-url', default='http://localhost/api')
 parser.add_argument('--ulab-url', required=True)
 parser.add_argument('--ulab-token', required=True)
 parser.add_argument('--octoprint-path', default='/home/pi/.octoprint')

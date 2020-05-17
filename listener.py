@@ -6,8 +6,7 @@ import aiofiles
 
 from Logger import get as log
 from args import get_args
-# from printer import Printer
-from exceptions import HttpException, GetFileException
+from exceptions import HttpException
 
 
 async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:

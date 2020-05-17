@@ -1,6 +1,7 @@
 import copy
 import json
 import os
+import time
 from typing import Dict, Any
 
 from aiohttp.client_exceptions import ClientConnectorError
@@ -26,6 +27,12 @@ class Printer:
         async def connect():
             log().info("socket connected, yujuu! :)")
             await self.init()
+
+        @self.ulabapi.socket.on("unauthorized", namespace='/pandora')
+        async def error():
+            log().error("socket unauthorized, code execution blocked")
+            while True:
+                time.sleep(10)
 
         @self.ulabapi.socket.event(namespace='/pandora')
         async def disconnect():
