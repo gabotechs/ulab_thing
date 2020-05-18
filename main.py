@@ -18,8 +18,8 @@ if __name__ == '__main__':
                 await asyncio.sleep(1)
 
         while True:
+            await asyncio.sleep(1)
             await printer.updateActualState()
             await printer.syncWithUlab()
-            await asyncio.sleep(1)
 
     loop.run_until_complete(main())
