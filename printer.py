@@ -17,6 +17,7 @@ from ulabapi import UlabApi
 class Printer:
     sentState: Dict[str, Any] = {}
     actualState: Dict[str, Any] = {}
+    connected: bool = False
 
     def __init__(self, octoprint_url, octoprint_config, ulab_url, ulab_token):
         self.octoapi = OctoApi(octoprint_url, octoprint_config)
@@ -26,16 +27,19 @@ class Printer:
         @self.ulabapi.socket.event(namespace='/pandora')
         async def connect():
             log().info("socket connected, yujuu! :)")
+            self.connected = True
             await self.init()
 
         @self.ulabapi.socket.on("unauthorized", namespace='/pandora')
         async def error():
             log().error("socket unauthorized, code execution blocked, replace the token and restart the system")
+            self.connected = False
             while True:
                 time.sleep(10)
 
         @self.ulabapi.socket.event(namespace='/pandora')
         async def disconnect():
+            self.connected = False
             log().info("socket disconnected, oh no! :(")
 
         @self.ulabapi.socket.event(namespace='/pandora')
@@ -84,10 +88,11 @@ class Printer:
             self.actualState["status"] = {"state": {"text": "Disconnected"}}
 
     async def syncWithUlab(self):
-        spec = self.diffengine.diff(self.actualState, self.sentState)
-        if len(spec):
-            try:
-                await self.ulabapi.update_status(spec)
-                self.sentState = copy.deepcopy(self.actualState)
-            except Exception as e:
-                log().error(e)
+        if self.connected:
+            spec = self.diffengine.diff(self.actualState, self.sentState)
+            if len(spec):
+                try:
+                    await self.ulabapi.update_status(spec)
+                    self.sentState = copy.deepcopy(self.actualState)
+                except Exception as e:
+                    log().error(e)
