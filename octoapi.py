@@ -14,10 +14,11 @@ class OctoApi:
         self.config_path = config_path
         self.url = url
         self.key = yaml.load(open(self.config_path + '/config.yaml'), Loader=yaml.loader.Loader)['api']['key']
-        self.session = lambda:  aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
+        self.session = lambda: aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
 
     async def connect(self, safe=True) -> None:
         r = await self.session().post(self.url+'/connection', data=json.dumps({"command": "connect"}))
+        r.close()
         if not r.status == 200:
             if safe:
                 await asyncio.sleep(10)
