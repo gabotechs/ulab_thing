@@ -30,7 +30,7 @@ class Printer:
 
         @self.ulabapi.socket.on("unauthorized", namespace='/pandora')
         async def error():
-            log().error("socket unauthorized, code execution blocked")
+            log().error("socket unauthorized, code execution blocked, replace the token and restart the system")
             while True:
                 time.sleep(10)
 

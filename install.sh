@@ -39,16 +39,14 @@ while true; do
     fi
 done
 echo "ok, octoprint path will be ${octo_path}"
-echo "what is the token asociated to this pandora?"
+echo "where is the token asociated to this pandora? (default /boot/ulab-token.txt)"
 while true; do
-    read token
-    if [[ ${token} == "" ]]; then
-        echo "the token must not be empty"
-    else
-        break
+    read token_path
+    if [[ ${token_path} == "" ]]; then
+        tokenPath="/boot/ulab-token.txt"
     fi
 done
-echo "ok, token will be ${token}"
+echo "ok, token will be ${token_path}"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
 
@@ -78,7 +76,7 @@ Description=ulab_thing
 
 [Service]
 User=root
-ExecStart=/bin/bash /bin/ulab_thing --ulab-token=$token --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
+ExecStart=/bin/bash /bin/ulab_thing --ulab-token-path=$token_path --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
 Restart=on-failure
 WorkingDirectory=$PWD
 StandardOutput=syslog
