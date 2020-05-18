@@ -1,10 +1,5 @@
-from base64 import b64encode
-from typing import Dict
-
 import aiohttp
 import socketio
-
-from exceptions import GetFileException
 
 
 class UlabApi:

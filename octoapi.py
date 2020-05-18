@@ -1,4 +1,4 @@
-import asyncio
+from Logger import get as log
 import json
 from typing import Dict
 
@@ -20,9 +20,12 @@ class OctoApi:
         r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect"}))
         if not r.status == 200:
             if safe:
-                await asyncio.sleep(10)
+                log().warning("could not connect to printer, sleeping...")
+                await asyncio.sleep(20)
             else:
                 raise HttpException(r.status)
+        else:
+            log().info("printer connected correctly")
 
     async def get_status(self) -> Dict:
         r = await self.session.get(self.url+'/printer')
