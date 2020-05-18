@@ -40,12 +40,12 @@ while true; do
 done
 echo "ok, octoprint path will be ${octo_path}"
 echo "where is the token asociated to this pandora? (default /boot/ulab-token.txt)"
-while true; do
-    read token_path
-    if [[ ${token_path} == "" ]]; then
-        tokenPath="/boot/ulab-token.txt"
-    fi
-done
+
+read token_path
+if [[ ${token_path} == "" ]]; then
+    tokenPath="/boot/ulab-token.txtK"
+fi
+
 echo "ok, token will be ${token_path}"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
