@@ -15,11 +15,11 @@ while true; do
     if [[ ${ulab_url} =~ ^http[s]?://.+$ ]]; then break; else echo "that is not a valid url"; fi
 done
 echo "ok, ulab url will be ${ulab_url}"
-echo "where will be octoprint? (default http://localhost:5000/api)"
+echo "where will be octoprint? (default http://localhost/api)"
 while true; do
     read octo_url
     if [[ ${octo_url} == "" ]]; then
-        octo_url="http://localhost:5000/api"
+        octo_url="http://localhost/api"
         break
     fi
     if [[ ${octo_url} =~ ^http[s]?://.+$ ]]; then break; else echo "that is not a valid url"; fi
