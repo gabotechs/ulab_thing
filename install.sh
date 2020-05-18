@@ -43,7 +43,7 @@ echo "where is the token asociated to this pandora? (default /boot/ulab-token.tx
 
 read token_path
 if [[ ${token_path} == "" ]]; then
-    tokenPath="/boot/ulab-token.txt"
+    token_path="/boot/ulab-token.txt"
 fi
 
 echo "ok, token will be ${token_path}"
