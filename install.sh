@@ -76,6 +76,7 @@ Description=ulab_thing
 
 [Service]
 User=root
+ExecStartPre=/bin/bash $PWD/update.sh
 ExecStart=/bin/bash /bin/ulab_thing --ulab-token-path=$token_path --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
 Restart=on-failure
 WorkingDirectory=$PWD
