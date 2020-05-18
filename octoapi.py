@@ -14,43 +14,48 @@ class OctoApi:
         self.config_path = config_path
         self.url = url
         self.key = yaml.load(open(self.config_path + '/config.yaml'), Loader=yaml.loader.Loader)['api']['key']
-        self.session = lambda: aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
+        self.get_session = lambda: aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
+        self.session = self.get_session()
+
+    async def _reset(self):
+        await self.session.close()
+        self.session = self.get_session()
 
     async def connect(self, safe=True) -> None:
-        r = await self.session().post(self.url+'/connection', data=json.dumps({"command": "connect"}))
-        r.close()
+        r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect"}))
         if not r.status == 200:
+            await self._reset()
             if safe:
                 await asyncio.sleep(10)
             else:
                 raise HttpException(r.status)
 
     async def get_status(self) -> Dict:
-        r = await self.session().get(self.url+'/printer')
+        r = await self.session.get(self.url+'/printer')
         if not r.status == 200:
             raise HttpException(r.status)
         status = await r.json()
         return status
 
     async def get_job(self) -> Dict:
-        r = await self.session().get(self.url+'/job')
+        r = await self.session.get(self.url+'/job')
         if not r.status == 200:
             raise HttpException(r.status)
         status = await r.json()
         return status
 
     async def post_command(self, command) -> None:
-        r = await self.session().post(self.url+'/printer/command', data=json.dumps({"commands": [command]}))
+        r = await self.session.post(self.url+'/printer/command', data=json.dumps({"commands": [command]}))
         if not r.status == 204:
             raise HttpException(r.status)
 
     async def print(self, file) -> None:
-        r = await self.session().post(self.url+'/files/local/'+file, data=json.dumps({"command": "select", "print": True}))
+        r = await self.session.post(self.url+'/files/local/'+file, data=json.dumps({"command": "select", "print": True}))
         if not r.status == 204:
             raise HttpException(r.status)
 
     async def cancel(self) -> None:
-        r = await self.session().post(self.url+'/job', data=json.dumps({"command": "cancel"}))
+        r = await self.session.post(self.url+'/job', data=json.dumps({"command": "cancel"}))
         if not r.status == 204:
             raise HttpException(r.status)
 
