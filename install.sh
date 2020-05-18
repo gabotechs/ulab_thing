@@ -76,6 +76,8 @@ Description=ulab_thing
 
 [Service]
 User=root
+After=network-online.target
+Wants=network-online.target
 ExecStartPre=/bin/bash $PWD/update.sh
 ExecStart=/bin/bash /bin/ulab_thing --ulab-token-path=$token_path --octoprint-url=$octo_url --ulab-url=$ulab_url --octoprint-path=$octo_path
 Restart=on-failure
