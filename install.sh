@@ -11,11 +11,11 @@ while true; do
     if [[ ${ulab_url} =~ ^http[s]?://.+$ ]]; then break; else echo "that is not a valid url"; fi
 done
 echo "ok, ulab url will be ${ulab_url}"
-echo "where will be octoprint? (default http://localhost/api)"
+echo "where will be octoprint? (default http://localhost:5000/api)"
 while true; do
     read octo_url
     if [[ ${octo_url} == "" ]]; then
-        octo_url="http://localhost/api"
+        octo_url="http://localhost:5000/api"
         break
     fi
     if [[ ${octo_url} =~ ^http[s]?://.+$ ]]; then break; else echo "that is not a valid url"; fi
@@ -48,20 +48,7 @@ echo "ok, token will be ${token}"
 echo "now we have all the info we need to install ulab_thing in this pandora, starting the party..."
 echo "==== installing dependencies ===="
 
-if [[ -d Python-3.7.4 ]]; then
-    echo "python3.7 already installed"
-else
-    apt update
-    apt install -y build-essential tk-dev libncurses5-dev libncursesw5-dev libreadline6-dev libdb5.3-dev libgdbm-dev libsqlite3-dev libssl-dev libbz2-dev libexpat1-dev liblzma-dev zlib1g-dev libffi-dev
-    wget https://www.pythls
-    on.org/ftp/python/3.7.4/Python-3.7.4.tgz
-    tar zxf Python-3.7.4.tgz
-    cd Python-3.7.4
-    ./configure
-    make -j 4
-    make altinstall
-    cd ..
-fi
+apt update
 apt install python3-venv -y
 python3 -m venv venv
 source venv/bin/activate
