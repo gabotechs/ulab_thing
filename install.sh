@@ -5,9 +5,13 @@ if [[ "$EUID" -ne 0 ]]
   exit
 fi
 
-echo "what will be the ulab server url?"
+echo "what will be the ulab server url? (default https://www.servidor3dulab.ovh)"
 while true; do
     read ulab_url
+    if [[ ${ulab_url} == "" ]]; then
+        ulab_url="https://www.servidor3dulab.ovh"
+        break
+    fi
     if [[ ${ulab_url} =~ ^http[s]?://.+$ ]]; then break; else echo "that is not a valid url"; fi
 done
 echo "ok, ulab url will be ${ulab_url}"
