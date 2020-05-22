@@ -16,6 +16,7 @@ class Args:
         if os.path.isfile("override_args.json"):
             try:
                 override_args = json.load(open("override_args.json"))
+                print("overriding args", override_args)
             except Exception as e:
                 print("error loading override args", e)
 
