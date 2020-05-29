@@ -24,9 +24,6 @@ if __name__ == '__main__':
                 log().warning("could not connect to ulab, retrying...")
                 await asyncio.sleep(1)
 
-        while True:
-            await asyncio.sleep(1)
-            await printer.updateActualState()
-            await printer.syncWithUlab()
+        await printer.loop()
 
     loop.run_until_complete(main())

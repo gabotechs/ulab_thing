@@ -17,16 +17,10 @@ class OctoApi:
         self.key = yaml.load(open(self.config_path + '/config.yaml'), Loader=yaml.loader.Loader)['api']['key']
         self.session = aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
 
-    async def connect(self, safe=True) -> None:
+    async def connect(self) -> None:
         r = await self.session.post(self.url+'/connection', data=json.dumps({"command": "connect"}))
         if not r.status == 200:
-            if safe:
-                log().warning("could not connect to printer, sleeping...")
-                await asyncio.sleep(20)
-            else:
-                raise HttpException(r.status)
-        else:
-            log().info("printer connected correctly")
+            raise HttpException(r.status)
 
     async def get_status(self) -> Dict:
         r = await self.session.get(self.url+'/printer')
