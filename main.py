@@ -20,8 +20,8 @@ if __name__ == '__main__':
             try:
                 await printer.ulabapi.connect()
                 break
-            except Exception as e:
-                log().warning("could not connect to ulab, retrying...")
+            except Exception:
+                log().warning(f"could not connect to ulab on {args.ulab_url}, retrying...")
                 await asyncio.sleep(1)
 
         await printer.loop()
