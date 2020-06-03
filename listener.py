@@ -14,7 +14,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
         log().warning("received instruction without id, ignoring it")
     if 'instruction' not in data:
         log().warning("received instruction without specifying an instruction")
-        printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "instruction not specified"}, namespace='/pandora')
+        await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "instruction not specified"}, namespace='/pandora')
 
     instruction = data['instruction']
     log().info("instruction " + instruction + " detected")
@@ -29,7 +29,8 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
         except TypeError:
             error_flag = True
         if error_flag:
-            printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "printer is not on an operational state"}, namespace='/pandora')
+            log().warning("instruction not allowed if pandora is not on an operational state")
+            await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "printer is not on an operational state"}, namespace='/pandora')
             return
 
     try:
