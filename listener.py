@@ -19,6 +19,19 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
     instruction = data['instruction']
     log().info("instruction " + instruction + " detected")
     answer_flag = True
+    if instruction in ["home", "print", "command", "load", "unload", "move"]:
+        error_flag = False
+        try:
+            if printer.actualState["status"]["state"]['text'] != 'Operational':
+                error_flag = True
+        except KeyError:
+            error_flag = True
+        except TypeError:
+            error_flag = True
+        if error_flag:
+            printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "printer is not on an operational state"}, namespace='/pandora')
+            return
+
     try:
         ###### HOME ######
         if instruction == 'home':
