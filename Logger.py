@@ -10,5 +10,6 @@ def get() -> logging.Logger:
     if not log:
         log = logging.getLogger("main")
         coloredlogs.install(level='DEBUG', logger=log)
+        log.propagate = False
 
     return log

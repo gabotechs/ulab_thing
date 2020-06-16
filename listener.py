@@ -162,7 +162,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
             for k in ['ssid', 'psk']:
                 if k not in data:
                     log().warning(k+" parameter not specified")
-                    await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": k + "parameter not specified"}, namespace='/pandora')
+                    await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": k + " parameter not specified"}, namespace='/pandora')
                     return
             log().info("new wifi data: ssid="+data['ssid']+" psk="+data['psk'])
             wifi = 'network={\n  ssid="' + data['ssid'] + '"\n  psk="' + data['psk'] + '"\n}\n'

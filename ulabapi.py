@@ -6,7 +6,7 @@ class UlabApi:
     def __init__(self, url, token):
         self.url = url
         self.token = token
-        self.socket = socketio.AsyncClient(logger=True)
+        self.socket = socketio.AsyncClient()
 
         self.session = aiohttp.ClientSession(headers={"Token": self.token})
 
