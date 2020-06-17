@@ -88,6 +88,12 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 await printer.syncWithUlab()
 
             log().info("printing file "+data['file']+'...')
+            if "init_gcode" in printer.actualState['settings']:
+                for pre_cmd in printer.actualState['settings']["init_gcode"].split(";"):
+                    if len(pre_cmd) < 2:
+                        continue
+                    log().info("executing init gcode "+pre_cmd)
+                    await printer.octoapi.post_command(pre_cmd)
             await printer.octoapi.print(gcode.split('/')[-1])
             await printer.ulabapi.socket.emit("print", {"id": data['file']}, namespace='/pandora')
 
