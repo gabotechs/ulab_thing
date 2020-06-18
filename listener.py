@@ -61,7 +61,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
             if not os.path.isfile(gcode):
                 log().info("file "+gcode+" not found, downloading it...")
 
-                url = get_args().ulab_url + '/gcodes/' + data['file']
+                url = get_args().ulab_url + '/gcodes/get?id=' + data['file']
                 r = await printer.ulabapi.session.get(url)
 
                 if not r.status == 200:
