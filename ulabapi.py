@@ -11,7 +11,7 @@ class UlabApi:
         self.session = aiohttp.ClientSession(headers={"Token": self.token})
 
     async def connect(self) -> None:
-        path = '/'.join(self.url.split("/")[3:])+'/socket.io'
+        path = '/'.join(self.url.split("/")[3:])+'/socket/socket.io'
         await self.socket.connect(self.url, namespaces=['/pandora'], headers={"Token": self.token}, socketio_path=path)
 
     async def update_status(self, spec) -> None:
