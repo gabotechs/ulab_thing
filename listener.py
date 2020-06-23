@@ -145,8 +145,9 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 log().warning("command not specified")
                 await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "command not specified"}, namespace='/pandora')
                 return
-            log().info(data['command'])
-            await printer.octoapi.post_command(data['command'])
+            for cmd in data['command'].split(";"):
+                log().info(cmd)
+                await printer.octoapi.post_command(cmd)
 
         ###### LOAD ######
         elif instruction == 'load':
