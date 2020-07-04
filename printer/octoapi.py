@@ -1,12 +1,10 @@
-from Logger import get as log
 import json
 from typing import Dict
 
-import asyncio
 import aiohttp
 import yaml
 
-from args import get_args
+from lib.args import get_args
 from exceptions import HttpException
 
 
@@ -14,7 +12,7 @@ class OctoApi:
     def __init__(self, url, config_path):
         self.config_path = config_path
         self.url = url
-        self.key = yaml.load(open(self.config_path + '/config.yaml'), Loader=yaml.loader.Loader)['api']['key']
+        self.key = yaml.load(open(self.config_path), Loader=yaml.loader.Loader)['api']['key']
         self.session = aiohttp.ClientSession(headers={"X-Api-Key": self.key, "Content-Type": "application/json"})
 
     async def connect(self) -> None:
@@ -22,26 +20,26 @@ class OctoApi:
         if not r.status == 200:
             raise HttpException(r.status)
 
-    async def get_status(self) -> Dict:
+    async def get_status(self) -> dict:
         r = await self.session.get(self.url+'/printer')
         if not r.status == 200:
             raise HttpException(r.status)
         status = await r.json()
         return status
 
-    async def get_job(self) -> Dict:
+    async def get_job(self) -> dict:
         r = await self.session.get(self.url+'/job')
         if not r.status == 200:
             raise HttpException(r.status)
         status = await r.json()
         return status
 
-    async def post_command(self, command) -> None:
+    async def post_command(self, command: str) -> None:
         r = await self.session.post(self.url+'/printer/command', data=json.dumps({"commands": [command]}))
         if not r.status == 204:
             raise HttpException(r.status)
 
-    async def print(self, file) -> None:
+    async def print(self, file: str) -> None:
         r = await self.session.post(self.url+'/files/local/'+file, data=json.dumps({"command": "select", "print": True}))
         if not r.status == 204:
             raise HttpException(r.status)

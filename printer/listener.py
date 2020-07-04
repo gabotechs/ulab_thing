@@ -4,8 +4,8 @@ from typing import Dict, Union
 
 import aiofiles
 
-from Logger import get as log
-from args import get_args
+from lib.Logger import get as log
+from lib.args import get_args
 from exceptions import HttpException
 
 
@@ -57,12 +57,13 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                 await printer.ulabapi.socket.emit(data['id'], {"status": 1, "message": "pandora is not in an operational state"}, namespace='/pandora')
                 return
 
-            gcode = get_args().octoprint_path+'/uploads/'+(data['file'] if data['file'].endswith('.gcode') else data['file']+'.gcode')
+            if not os.path.isdir(get_args().octoprint_upload_path):
+                os.mkdir(get_args().octoprint_upload_path)
+            gcode = get_args().octoprint_upload_path+'/'+(data['file'] if data['file'].endswith('.gcode') else data['file']+'.gcode')
             if not os.path.isfile(gcode):
                 log().info("file "+gcode+" not found, downloading it...")
 
-                url = get_args().ulab_url + '/gcodes/get?id=' + data['file']
-                r = await printer.ulabapi.session.get(url)
+                r = await printer.ulabapi.download(data['file'])
 
                 if not r.status == 200:
                     log().warning("error downloading file "+data['file']+" from url: "+str(r.status))
@@ -123,7 +124,7 @@ async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
                     return
             for k in keys:
                 printer.actualState['settings'][k] = data[k]
-            json.dump(printer.actualState['settings'], open("store.json", "w"))
+            json.dump(printer.actualState['settings'], open("../store.json", "w"))
             await printer.syncWithUlab()
 
         ###### MOVE ######

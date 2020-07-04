@@ -1,8 +1,10 @@
 import os
 import time
-from Logger import get as log
-from args import get_args
-from printer import Printer
+from lib.Logger import get as log
+from lib.args import get_args
+from printer.ulabapi import UlabApi
+from printer.octoapi import OctoApi
+from printer.printer import Printer
 
 if __name__ == '__main__':
     import asyncio
@@ -15,13 +17,15 @@ if __name__ == '__main__':
             while True:
                 time.sleep(10)
         ulab_token = open(args.ulab_token_path).read().replace('\n', "").replace(" ", "")
-        printer = Printer(args.octoprint_url, args.octoprint_path, args.ulab_url, ulab_token)
+        octoapi = OctoApi(args.octoprint_url, args.octoprint_config_path)
+        ulabapi = UlabApi(args.ulab_socket_url, args.ulab_backend_url, ulab_token)
+        printer = Printer(octoapi, ulabapi)
         while True:
             try:
                 await printer.ulabapi.connect()
                 break
             except Exception:
-                log().warning(f"could not connect to ulab on {args.ulab_url}, retrying...")
+                log().warning(f"could not connect to uCloud socket on {ulabapi.url_socket}, retrying...")
                 await asyncio.sleep(1)
 
         await printer.loop()

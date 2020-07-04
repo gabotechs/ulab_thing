@@ -7,12 +7,12 @@ from typing import Dict, Any
 
 from aiohttp.client_exceptions import ClientConnectorError
 
-from Logger import get as log
-from diffengine import DiffEngine
+from lib.Logger import get as log
+from lib.diffengine import DiffEngine
 from exceptions import HttpException
-from listener import listener
-from octoapi import OctoApi
-from ulabapi import UlabApi
+from printer.listener import listener
+from printer.octoapi import OctoApi
+from printer.ulabapi import UlabApi
 
 
 class Printer:
@@ -20,9 +20,9 @@ class Printer:
     actualState: Dict[str, Any] = {}
     connected: bool = False
 
-    def __init__(self, octoprint_url, octoprint_config, ulab_url, ulab_token):
-        self.octoapi = OctoApi(octoprint_url, octoprint_config)
-        self.ulabapi = UlabApi(ulab_url, ulab_token)
+    def __init__(self, octoapi: OctoApi, ulabapi: UlabApi):
+        self.octoapi = octoapi
+        self.ulabapi = ulabapi
         self.diffengine = DiffEngine()
 
         @self.ulabapi.socket.event(namespace='/pandora')
@@ -81,11 +81,11 @@ class Printer:
 
     async def init(self):
         self.sentState = {}
-        if os.path.isfile("store.json"):
-            self.actualState = {"settings": json.load(open("store.json"))}
+        if os.path.isfile("../store.json"):
+            self.actualState = {"settings": json.load(open("../store.json"))}
         else:
             self.actualState = {"settings": {"init_gcode": "M851 Z-0.5"}}
-            json.dump(self.actualState['settings'], open("store.json", "w"))
+            json.dump(self.actualState['settings'], open("../store.json", "w"))
         self.actualState['download'] = {'file': None, 'completion': -1}
         self.actualState['error'] = None
 
@@ -94,7 +94,7 @@ class Printer:
     async def updateSettings(self, spec: Dict):
         for k in spec:
             self.actualState["settings"][k] = spec[k]
-        json.dump(self.actualState["settings"], open("store.json", "w"))
+        json.dump(self.actualState["settings"], open("../store.json", "w"))
 
     async def updateActualState(self):
         try:

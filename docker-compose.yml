@@ -1,0 +1,30 @@
+version: '3.0'
+services:
+  ulab_thing:
+    container_name: ulab_thing
+    build:
+      context: .
+    networks:
+      - net
+    volumes:
+      - "path:/home/pi/.octoprint"
+    stdin_open: true
+    tty: true
+    command: python main.py --octoprint-url=http://octoprint:5000 --ulab-backend-url=http://www.servidor3dulab.ovh/v2 --ulab-socket-url=http://www.servidor3dulab.ovh/v2/socket --ulab-token-path=ulab-token.txt --octoprint-config-path=config.yaml
+
+  octoprint:
+    container_name: octoprint
+    image: gabrielmusat/octoprint:latest
+    command: python main.py --port=5000
+    networks:
+      - net
+    volumes:
+      - "path:/home/pi/.octoprint"
+
+networks:
+  net:
+
+volumes:
+  path:
+
+
