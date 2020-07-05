@@ -4,12 +4,14 @@ import json
 
 parser = argparse.ArgumentParser()
 
+#### LEGACY ARGS ####
+parser.add_argument('--ulab-url', default="https://www.servidor3dulab.ovh/v2")
+parser.add_argument('--octoprint-path', default='/home/pi/.octoprint')
+#####################
 parser.add_argument('--octoprint-url', default='http://localhost/api')
-parser.add_argument('--ulab-url')
-parser.add_argument('--ulab-backend-url')
-parser.add_argument('--ulab-socket-url')
+parser.add_argument('--ulab-backend-url', default="https://www.servidor3dulab.ovh/v2")
+parser.add_argument('--ulab-socket-url', default="https://www.servidor3dulab.ovh/v2/socket")
 parser.add_argument('--ulab-token-path', default='/boot/ulab-token.txt')
-parser.add_argument('--octoprint-path', default='/home/pi/.octoprint')  # legacy arg
 parser.add_argument('--octoprint-upload-path', default='/home/pi/.octoprint/uploads')
 parser.add_argument('--octoprint-config-path', default='/home/pi/.octoprint/config.yaml')
 
@@ -40,5 +42,5 @@ args: Args = None
 def get_args() -> Args:
     global args
     if not args:
-        args = Args(parser.parse_args())
+        args = Args(parser.parse_known_args()[0])
     return args
