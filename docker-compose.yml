@@ -10,7 +10,7 @@ services:
       - "path:/home/pi/.octoprint"
     stdin_open: true
     tty: true
-    command: python main.py --octoprint-url=http://octoprint:5000 --ulab-backend-url=http://www.servidor3dulab.ovh/v2 --ulab-socket-url=http://www.servidor3dulab.ovh/v2/socket --ulab-token-path=ulab-token.txt --octoprint-config-path=config.yaml
+    command: python main.py --octoprint-url=http://octoprint:5000 --ulab-backend-url=http://192.168.0.20:5000 --ulab-socket-url=http://192.168.0.20:5001 --ulab-token-path=ulab-token.txt --octoprint-config-path=config.yaml
 
   octoprint:
     container_name: octoprint
