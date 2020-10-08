@@ -9,7 +9,7 @@ from exceptions import HttpException
 
 
 class OctoApi:
-    def __init__(self, url, config_path):
+    def __init__(self, url: str, config_path: str):
         self.config_path = config_path
         self.url = url
         self.key = yaml.load(open(self.config_path), Loader=yaml.loader.Loader)['api']['key']
