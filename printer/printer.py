@@ -25,35 +25,35 @@ class Printer:
         self.ulabapi = ulabapi
         self.diffengine = DiffEngine()
 
-        @self.ulabapi.socket.event(namespace='/pandora')
-        async def connect():
+        async def connect(data: str = ""):
             log().info("socket connected, yujuu! :)")
             self.connected = True
             await self.init()
             await self.syncWithUlab()
+        self.ulabapi.on_connect = connect
 
-        @self.ulabapi.socket.event(namespace='/pandora')
-        async def unauthorized():
+        async def unauthorized(data: str = ""):
             log().error("socket unauthorized, code execution blocked, replace the token and restart the system")
             self.connected = False
             while True:
                 time.sleep(10)
+        self.ulabapi.on_unauthorized = unauthorized
 
-        @self.ulabapi.socket.event(namespace='/pandora')
-        async def disconnect():
+        async def disconnect(data: str = ""):
             self.connected = False
             log().warning("socket disconnected, oh no! :(")
+        self.ulabapi.on_disconnect = disconnect
 
-        @self.ulabapi.socket.event(namespace='/pandora')
-        async def init():
+        async def init(data: str = ""):
             log().info("data initialization requested")
             await self.init()
             await self.syncWithUlab()
+        self.ulabapi.on_init = init
 
-        @self.ulabapi.socket.event(namespace='/pandora')
-        async def instruction(data):
-            log().info("incoming instruction:"+json.dumps(data))
+        async def instruction(data: str):
+            log().info("incoming instruction: "+data)
             await listener(self, data)
+        self.ulabapi.on_instruction = instruction
 
     async def loop(self):
         last_connection_try = 0

@@ -9,7 +9,13 @@ from lib.args import get_args
 from exceptions import HttpException
 
 
-async def listener(printer, data: Dict[str, Union[str, int, float]]) -> None:
+async def listener(printer, data_raw: str) -> None:
+    try:
+        data: Dict[str, Union[str, int, float]] = json.loads(data_raw)
+    except json.JSONDecodeError:
+        log().error("error decoding instruction "+data_raw)
+        return
+
     if 'id' not in data:
         log().warning("received instruction without id, ignoring it")
     if 'instruction' not in data:
