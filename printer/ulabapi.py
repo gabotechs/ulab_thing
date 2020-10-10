@@ -13,11 +13,12 @@ class UlabApi:
         self.token: str = token
         self.socket: T.Union[None, ackWebsockets.Socket] = None
         self.session = aiohttp.ClientSession(headers={"Token": self.token})
-        async def dummy(data: str = ""): return
+        async def dummy(data: T.Optional[T.Union[str, Exception]] = ""): return
         self.on_connect: T.Callable[[], T.Awaitable[None]] = dummy
         self.on_init: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_unauthorized: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_disconnect: T.Callable[[], T.Awaitable[None]] = dummy
+        self.on_error: T.Callable[[Exception], T.Awaitable[None]] = dummy
         self.on_instruction: T.Callable[[str], T.Awaitable[ackWebsockets.SocketMessageResponse]] = dummy
 
     async def download(self, file: str) -> aiohttp.ClientResponse:
@@ -25,9 +26,7 @@ class UlabApi:
         r = await self.session.get(url)
         return r
 
-    async def reconnect(self, e: Exception = None):
-        if e:
-            print("websocket disconnected abnormally:", e)
+    async def reconnect(self):
         self.socket = None
         await asyncio.sleep(10)
         await self.connect()
@@ -39,11 +38,15 @@ class UlabApi:
                 self.socket = ackWebsockets.Socket(conn)
                 await self.on_connect()
 
-                async def on_disconnect(ex: Exception = None):
+                async def on_disconnect():
                     await self.on_disconnect()
-                    await self.reconnect(ex)
+                    await self.reconnect()
                 self.socket.onDisconnect(on_disconnect)
-                self.socket.onError(on_disconnect)
+
+                async def on_error(ex: Exception):
+                    await self.on_error(ex)
+                    await self.reconnect()
+                self.socket.onError(on_error)
                 self.socket.on("unauthorized", self.on_unauthorized)
                 self.socket.on("init", self.on_init)
                 self.socket.on_sync("instruction", self.on_instruction)
@@ -51,7 +54,7 @@ class UlabApi:
                 break
 
             except Exception as e:  # todo: catch concrete exceptions
-                print("exception connecting to websocket:", e)
+                await self.on_error(e)
                 self.socket = None
                 await asyncio.sleep(10)
 

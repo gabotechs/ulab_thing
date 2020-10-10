@@ -46,6 +46,11 @@ class Printer:
             log().warning("socket disconnected, oh no! :(")
         self.ulabapi.on_disconnect = disconnect
 
+        async def error(e: Exception):
+            self.connected = False
+            log().warning("error on Socket: "+str(e))
+        self.ulabapi.on_error = error
+
         async def init(data: str = ""):
             log().info("data initialization requested, starting transmission")
             await self.init()
