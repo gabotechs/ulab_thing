@@ -31,8 +31,7 @@ class Printer:
         async def connect(data: str = ""):
             log().info("socket connected, yujuu! :)")
             self.connected = True
-            await self.init()
-            await self.syncWithUlab()
+
         self.ulabapi.on_connect = connect
 
         async def unauthorized(data: str = ""):
@@ -48,7 +47,7 @@ class Printer:
         self.ulabapi.on_disconnect = disconnect
 
         async def init(data: str = ""):
-            log().info("data initialization requested")
+            log().info("data initialization requested, starting transmission")
             await self.init()
             await self.syncWithUlab()
         self.ulabapi.on_init = init
@@ -81,7 +80,7 @@ class Printer:
                 except Exception as e:
                     log().error(f"unknown error while trying to connect printer: "+str(e))
 
-            if self.connected:
+            if self.connected and self.transmitting:
                 await self.syncWithUlab()
             await asyncio.sleep(1)
 
@@ -143,7 +142,7 @@ class Printer:
 
     async def syncWithUlab(self):
         spec = self.diffengine.diff(self.actualState, self.sentState)
-        if len(spec) and self.transmitting:
+        if len(spec):
             try:
                 await self.ulabapi.update_status(spec)
                 self.sentState = copy.deepcopy(self.actualState)
