@@ -14,11 +14,11 @@ class UlabApi:
         self.socket: T.Union[None, ackWebsockets.Socket] = None
         self.session = aiohttp.ClientSession(headers={"Token": self.token})
         async def dummy(data: str = ""): return
-        self.on_connect = T.Callable[[], T.Awaitable[None]] = dummy
+        self.on_connect: T.Callable[[], T.Awaitable[None]] = dummy
         self.on_init: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_unauthorized: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_disconnect: T.Callable[[], T.Awaitable[None]] = dummy
-        self.on_instruction: T.Callable[[str], T.Awaitable[None]] = dummy
+        self.on_instruction: T.Callable[[str], T.Awaitable[ackWebsockets.SocketMessageResponse]] = dummy
 
     async def download(self, file: str) -> aiohttp.ClientResponse:
         url = self.url_backend + '/gcodes/get?id=' + file
@@ -46,7 +46,7 @@ class UlabApi:
                 self.socket.onError(on_disconnect)
                 self.socket.on("unauthorized", self.on_unauthorized)
                 self.socket.on("init", self.on_init)
-                self.socket.on("instruction", self.on_instruction)
+                self.socket.on_sync("instruction", self.on_instruction)
                 loop.create_task(self.socket.run())
                 break
 
