@@ -59,4 +59,4 @@ class UlabApi:
                 await asyncio.sleep(10)
 
     async def update_status(self, spec: dict) -> None:
-        await self.socket.emit("update", json.dumps(spec))
+        await self.socket.emit("update", json.dumps({"pandora": spec}))

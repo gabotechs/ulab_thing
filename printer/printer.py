@@ -43,11 +43,13 @@ class Printer:
 
         async def disconnect(data: str = ""):
             self.connected = False
+            self.transmitting = False
             log().warning("socket disconnected, oh no! :(")
         self.ulabapi.on_disconnect = disconnect
 
         async def error(e: Exception):
             self.connected = False
+            self.transmitting = False
             log().warning("error on Socket: "+str(e))
         self.ulabapi.on_error = error
 
