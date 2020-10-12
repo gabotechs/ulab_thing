@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--octoprint-url', default='http://localhost/api')
 parser.add_argument('--ulab-backend-url', default="https://www.servidor3dulab.ovh")
-parser.add_argument('--ulab-socket-url', default="wss://www.servidor3dulab.ovh/ws/ws")
+parser.add_argument('--ulab-socket-url', default="wss://www.servidor3dulab.ovh/ws")
 parser.add_argument('--ulab-token-path', default='/boot/ulab-token.txt')
 parser.add_argument('--octoprint-upload-path', default='/home/pi/.octoprint/uploads')
 parser.add_argument('--octoprint-config-path', default='/home/pi/.octoprint/config.yaml')
