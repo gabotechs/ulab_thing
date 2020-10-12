@@ -19,6 +19,7 @@ class UlabApi:
         self.on_unauthorized: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_disconnect: T.Callable[[], T.Awaitable[None]] = dummy
         self.on_error: T.Callable[[Exception], T.Awaitable[None]] = dummy
+        self.on_stop: T.Callable[[str], T.Awaitable[None]] = dummy
         self.on_instruction: T.Callable[[str], T.Awaitable[ackWebsockets.SocketMessageResponse]] = dummy
 
     async def download(self, file: str) -> aiohttp.ClientResponse:
@@ -49,6 +50,7 @@ class UlabApi:
                 self.socket.onError(on_error)
                 self.socket.on("unauthorized", self.on_unauthorized)
                 self.socket.on("init", self.on_init)
+                self.socket.on("stop", self.on_stop)
                 self.socket.on_sync("instruction", self.on_instruction)
                 loop.create_task(self.socket.run())
                 break

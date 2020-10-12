@@ -53,6 +53,12 @@ class Printer:
             log().warning("error on Socket: "+str(e))
         self.ulabapi.on_error = error
 
+        async def stop(data: str = ""):
+            log().info("socket requested to stop transmission")
+            self.transmitting = False
+
+        self.ulabapi.on_stop = stop
+
         async def init(data: str = ""):
             log().info("data initialization requested, starting transmission")
             await self.init()
@@ -71,7 +77,9 @@ class Printer:
         last_connection_try = 0
         while True:
             await self.updateActualState()
-            if time.time() - last_connection_try > 20 and (self.actualState["status"]["state"]['text'] == 'Closed' or self.actualState["error"] == 409):
+            status = self.actualState["status"]["state"]["text"] if "status" in self.actualState and "state" in self.actualState["status"] and "text" in self.actualState["status"]["state"] else "unknown"
+            error = self.actualState["error"] if "error" in self.actualState else 0
+            if time.time() - last_connection_try > 20 and (status == 'Closed' or error == 409):
                 log().warning("closed status detected, forcing connection...")
                 last_connection_try = time.time()
                 try:
