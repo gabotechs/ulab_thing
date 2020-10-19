@@ -48,7 +48,6 @@ class UlabApi:
                     await self.on_error(ex)
                     await self.reconnect()
                 self.socket.onError(on_error)
-                self.socket.on("unauthorized", self.on_unauthorized)
                 self.socket.on("init", self.on_init)
                 self.socket.on("stop", self.on_stop)
                 self.socket.on_sync("instruction", self.on_instruction)
