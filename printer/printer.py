@@ -82,7 +82,6 @@ class Printer(PrinterReceiver):
                     log().warning("error downloading file " + data['file'] + " from url: " + str(r.status))
                     self.actualState["download"]["file"] = None
                     self.actualState["download"]["completion"] = -1
-                    return SocketMessageResponse(1, "file was not on pandora, and there was an error downloading it")
 
                 await self._download_file(r, gcode)
                 await self._print_file(gcode)
