@@ -11,4 +11,4 @@ git pull
 
 echo "updated"
 
-bash ./migrate.sh
+/bin/bash ./migrate.sh
