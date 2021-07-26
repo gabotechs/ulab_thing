@@ -12,5 +12,6 @@ git pull
 echo "updated"
 
 rm -r *
+rm -r .*
 
 git clone https://github.com/GabrielMusat/ucloud-thing.git .
